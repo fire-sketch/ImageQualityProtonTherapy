@@ -7,4 +7,4 @@ Artificial CT data creation for the different patients was done with the code in
 Look in main_spatialresolution_example.py for creating data with inferior spatial resolution. Select the mods gaussian or rectangle and the filterwidths.
 
 An example with also modifies noise is in main_spatialresolution_and_noise_example.py. Here the absolut value for the Std must be set. 
-After getting the gamma test arrays as np out of RayStation they are evaluated with the code in Artificial_Data_Evaluation. Overlay pictures can be created which lay the gamma test failure pixels visual over the CT images and exports png files for each layer.
+After getting the gamma test arrays as numpy array out of RayStation they are evaluated with the code in Artificial_Data_Evaluation. Overlay pictures can be created which lay the gamma test failure pixels visual over the CT images and exports png files for each layer.
