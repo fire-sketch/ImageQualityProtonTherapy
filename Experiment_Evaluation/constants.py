@@ -1,0 +1,63 @@
+"""
+Constants for Medical Image Analysis
+
+"""
+
+# Directory and file paths
+BASE_FOLDER = 'Experimente/'
+ROOT_DIRECTORY = 'Experimente'
+
+# CT Analysis Constants
+CT_OFFSET_VALUE = 180.0
+CT_ROI_SIZE = 10
+CT_ANGLE_START = 0
+CT_ANGLE_END = 180
+CT_ANGLE_STEP = 20
+CT_BINS = 20
+CT_REBIN_RANGE_MIN = -5
+CT_REBIN_RANGE_MAX = 5
+
+# MTF Calculation Constants
+MTF_ZERO_PAD_SIZE = 100000
+MTF_ZERO_PAD_CENTER = 50000
+MTF_FIT_ZERO_PAD_SIZE = 10000
+MTF_FIT_ZERO_PAD_CENTER = 5000
+MTF_FIT_FREQUENCY_LIMIT = 100
+MTF_MULTIPLICATION_FACTOR = 10
+
+# Noise Analysis Constants
+NOISE_ROI_SIZE_DEFAULT = 50
+NOISE_ROI_SIZE_SPECIAL = 70
+NOISE_ROI_SIZE_SMALL = 5
+NOISE_ROI_SIZE_FDG_GA = 12
+
+# Special dataset coordinates
+NOISE_FDG_GA_COORDINATES = [220, 220]
+NOISE_NOT_CENTER_DEFAULT = [250, 190]
+NOISE_NOT_CENTER_SPECIAL = [250, 65]
+
+# Gaussian fitting parameters
+GAUSS_P0_DEFAULT = [0, 1., 1., 1., 1.]
+GAUSS_P0_FDG_GA = [3, 1., 1., 1., 1.]
+
+# Noise indices for detrending
+NOISE_INDICES_ESF = [0, 1, 2, -3, -2, -1]
+NOISE_INDICES_LSF = [0, 1, 2, 3, -4, -3, -2, -1]
+
+# Pixel spacing precision
+PIXEL_SPACING_PRECISION = 0.01
+
+# Threshold values
+AREA_SEARCH_POINTS = 10
+MIN_AREA_THRESHOLD = 100
+REBIN_THRESHOLD = 0.0001
+
+# Rounding precision
+NOISE_PRECISION = 2
+FWHM_PRECISION = 3
+MTF_PRECISION = 3
+
+# Dataset names for special handling
+SPECIAL_DATASETS_UB_B = ['ub_039', 'b_039']
+DEBUG_DATASETS = ['FDG_20']
+IMSAVE_PATH = 'outputImages'

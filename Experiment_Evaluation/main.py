@@ -1,19 +1,26 @@
-import glob
+"""
+Medical Image Quality Analysis Main Application
+==============================================
+Main application for medical image quality assessment.
+"""
+
 import os
-import re
+
 from enum import Enum
 from pathlib import Path
 
-import Calculation
-import matplotlib.pyplot as plt
 import pandas as pd
 
-import Dicts
+import calculation_utils
+import image_processing
+import noise_analysis
+import constants
 
-folder = '../../Experimente/'
-# possible operations: LSF, ESF, CT
+folder = constants.BASE_FOLDER
+
 
 class Names(Enum):
+    """Enumeration of available dataset names."""
     FDG_11 = 'FDG_11'
     FDG_12 = 'FDG_12'
     FDG_61 = 'FDG_61'
@@ -51,167 +58,176 @@ class Names(Enum):
     b_097 = 'b_097'
     b_117 = 'b_117'
 
-do_ct = 1
-root = '../../Experimente'
-#save = '../../Experimente/images'
-paths = [x[0] for x in os.walk(folder)][1:]
-print(paths)
-patient_names = [Path(p).name for p in paths]
-print(patient_names)
 
+def main() -> None:
+    """Main execution function for medical image analysis."""
 
-names = [name for name in patient_names if 'FDG' not in name and 'GA' not in name]
+    # Configuration
+    do_ct = 1
+    root = constants.ROOT_DIRECTORY
 
-#names = [e.value for e in Names if 'FDG' not in e.value and 'GA' not in e.value]
-Calculation.pre_init()
-operation = 'CT'
+    # Discover available datasets
+    paths = [x[0] for x in os.walk(folder)][1:]
+    print(paths)
+    patient_names = [Path(p).name for p in paths]
+    print(patient_names)
 
-#if not os.path.exists(save):
-    # Create a new directory because it does not exist
-   # os.makedirs(save)
-GA_FWHMs_fit = []
-GA_FWHMs_org = []
-FDG_FWHMs_fit = []
-FDG_FWHMs_org = []
-CT_FWHMs_fit = []
-CT_FWHMs_org = []
+    ct_dataset_names = [name for name in patient_names if 'FDG' not in name and 'GA' not in name]
 
-noise_GA_mean = []
-noise_GA_std = []
-noise_CT_mean = []
-noise_CT_std = []
-noise_CT_mean_center = []
-noise_CT_std_center = []
-noise_CT_mean_not_center = []
-noise_CT_std_not_center = []
-noise_FDG_mean = []
-noise_FDG_std =[]
-MTF50s_org = []
-MTF50s_fit = []
-MTF10s_org = []
-MTF10s_fit = []
-if do_ct:
-    for name in names:
+    calculation_utils.pre_init()
+    operation = 'CT'
 
-        x_pred, y_pred, rebin_x, rebin_y, spacing = Calculation.do_lsf_radial(root, name, operation)
-        mean, std = Calculation.noise_all_image(root,name)
-        mean_center,std_center = Calculation.noise_center(root,name)
-        mean_not_center,std_not_center = Calculation.noise_not_center(root,name)
-    #    save_path = save + '/' + name
-        FWHM_fit = Calculation.fw_hm_fit(x_pred, y_pred)
+    # Initialize result storage
+    ga_fwhms_fit = []
+    ga_fwhms_org = []
+    fdg_fwhms_fit = []
+    fdg_fwhms_org = []
+    ct_fwhms_fit = []
+    ct_fwhms_org = []
 
-        FWHM_org = Calculation.fw_hm_org(rebin_x, rebin_y)
-        noise_CT_mean.append(mean)
-        noise_CT_std.append(std)
-        noise_CT_mean_center.append(mean_center)
-        noise_CT_std_center.append(std_center)
-        noise_CT_mean_not_center.append(mean_not_center)
-        noise_CT_std_not_center.append(std_not_center)
-        print(FWHM_org)
-        print(FWHM_fit)
+    noise_ga_mean = []
+    noise_ga_std = []
+    noise_ct_mean = []
+    noise_ct_std = []
+    noise_ct_mean_center = []
+    noise_ct_std_center = []
+    noise_ct_mean_not_center = []
+    noise_ct_std_not_center = []
+    noise_fdg_mean = []
+    noise_fdg_std = []
+    mtf50s_org = []
+    mtf50s_fit = []
+    mtf10s_org = []
+    mtf10s_fit = []
 
-        CT_FWHMs_fit.append(FWHM_fit)
-        CT_FWHMs_org.append(FWHM_org)
-        xf1_fit, yf_fit = Calculation.do_mtf_fit(x_pred, y_pred, spacing)
-        x50, x10 = Calculation.mtf_val_fit(xf1_fit, yf_fit)
-        MTF50s_fit.append(x50)
-        MTF10s_fit.append(x10)
-        print(str(x50) + ' ,' + str(x10))
-        xf1_org, yf_org = Calculation.do_mtf_org(rebin_x, rebin_y, spacing)
-        x50, x10 = Calculation.mtf_val_org(xf1_org, yf_org)
-        MTF50s_org.append(x50)
-        MTF10s_org.append(x10)
-        print(str(x50) + ' ,' + str(x10))
+    Path(constants.IMSAVE_PATH).mkdir(parents=True, exist_ok=True)
+    # CT Analysis
+    if do_ct:
+        print("Starting CT analysis...")
+        for name in ct_dataset_names:
+            try:
+                x_pred, y_pred, rebin_x, rebin_y, spacing = image_processing.do_lsf_radial(root, name, operation)
+                mean, std = noise_analysis.noise_all_image(root, name)
+                mean_center, std_center = noise_analysis.noise_center(root, name)
+                mean_not_center, std_not_center = noise_analysis.noise_not_center(root, name)
+
+                fwhm_fit = image_processing.fw_hm_fit(x_pred, y_pred)
+                fwhm_org = image_processing.fw_hm_org(rebin_x, rebin_y)
+
+                noise_ct_mean.append(mean)
+                noise_ct_std.append(std)
+                noise_ct_mean_center.append(mean_center)
+                noise_ct_std_center.append(std_center)
+                noise_ct_mean_not_center.append(mean_not_center)
+                noise_ct_std_not_center.append(std_not_center)
+
+                print(f"{name}: FWHM_org={fwhm_org}, FWHM_fit={fwhm_fit}")
+
+                ct_fwhms_fit.append(fwhm_fit)
+                ct_fwhms_org.append(fwhm_org)
+
+                xf1_fit, yf_fit = image_processing.do_mtf_fit(x_pred, y_pred, spacing)
+                x50, x10 = image_processing.mtf_val_fit(xf1_fit, yf_fit)
+                mtf50s_fit.append(x50)
+                mtf10s_fit.append(x10)
+                print(f"MTF fit: {x50}, {x10}")
+
+                xf1_org, yf_org = image_processing.do_mtf_org(rebin_x, rebin_y, spacing)
+                x50, x10 = image_processing.mtf_val_org(xf1_org, yf_org)
+                mtf50s_org.append(x50)
+                mtf10s_org.append(x10)
+                print(f"MTF org: {x50}, {x10}")
+
+            except Exception as e:
+                print(f"Error processing {name}: {e}")
+
+        # Save CT MTF results
+        d = {
+            "MTF50_org": pd.Series(mtf50s_org, index=ct_dataset_names),
+            'MTF50_fit': pd.Series(mtf50s_fit, index=ct_dataset_names),
+            "MTF10_org": pd.Series(mtf10s_org, index=ct_dataset_names),
+            "MTF10_fit": pd.Series(mtf10s_fit, index=ct_dataset_names),
+        }
+
+        df = pd.DataFrame(d)
+        file_name = root + '/MTF_val_CT.csv'
+        df.to_csv(file_name)
+
+        # Save CT FWHM and noise results
+        d = {
+            "FWHM_org": pd.Series(ct_fwhms_org, index=ct_dataset_names),
+            'FWHM_fit': pd.Series(ct_fwhms_fit, index=ct_dataset_names),
+            "noise_mean_all_image": pd.Series(noise_ct_mean, index=ct_dataset_names),
+            "noise_std_all_image": pd.Series(noise_ct_std, index=ct_dataset_names),
+            "noise_mean_center": pd.Series(noise_ct_mean_center, index=ct_dataset_names),
+            "noise_std_center": pd.Series(noise_ct_std_center, index=ct_dataset_names),
+            "noise_mean_not_center": pd.Series(noise_ct_mean_not_center, index=ct_dataset_names),
+            "noise_std_not_center": pd.Series(noise_ct_std_not_center, index=ct_dataset_names)
+        }
+
+        df = pd.DataFrame(d)
+        file_name = root + '/FWHM_CT.csv'
+        df.to_csv(file_name)
+
+    # ESF Analysis for nuclear medicine datasets
+    fdg_dataset_names = [name for name in patient_names if 'FDG' in name and 'PET' not in name]
+    fdg_dataset_names = sorted(fdg_dataset_names, key=lambda x: int(x[4:]))
+    fdg_pet_dataset_names = [name for name in patient_names if 'FDG_PET' in name]
+    fdg_pet_dataset_names = sorted(fdg_pet_dataset_names, key=lambda x: int(x[8:]))
+    ga_dataset_names = [name for name in patient_names if 'GA' in name and 'PET' not in name]
+    ga_dataset_names = sorted(ga_dataset_names, key=lambda x: int(x[3:]))
+    ga_pet_dataset_names = [name for name in patient_names if 'GA_PET' in name]
+    ga_pet_dataset_names = sorted(ga_pet_dataset_names, key=lambda x: int(x[7:]))
+    esf_dataset_names = fdg_dataset_names + ga_dataset_names
+
+    calculation_utils.pre_init()
+    operation = 'ESF'
+
+    print("Starting ESF analysis...")
+    for name in esf_dataset_names:
+        try:
+            x, lsf, x_pred, y_pred = image_processing.esf(root, name, operation)
+            fwhm_fit = image_processing.fw_hm_fit(x_pred, y_pred)
+            mean, std = noise_analysis.noise_all_image(root, name)
+
+            fwhm_org = image_processing.fw_hm_org(x, lsf)
+            print(f"{name}: FWHM_fit={fwhm_fit}, FWHM_org={fwhm_org}")
+
+            if 'FDG' in name:
+                fdg_fwhms_fit.append(fwhm_fit)
+                fdg_fwhms_org.append(fwhm_org)
+                noise_fdg_mean.append(mean)
+                noise_fdg_std.append(std)
+            elif 'GA' in name:
+                ga_fwhms_fit.append(fwhm_fit)
+                ga_fwhms_org.append(fwhm_org)
+                noise_ga_mean.append(mean)
+                noise_ga_std.append(std)
+
+        except Exception as e:
+            print(f"Error processing {name}: {e}")
+
+    all_dataset_names = ct_dataset_names + esf_dataset_names
+
+    # Save ESF results
     d = {
-        "MTF50_org": pd.Series(MTF50s_org, index=names),
-        'MTF50_fit': pd.Series(MTF50s_fit, index=names),
-        "MTF10_org": pd.Series(MTF10s_org, index=names),
-        "MTF10_fit": pd.Series(MTF10s_fit, index=names),
+        "FDG_FWHM_fit": pd.Series(fdg_fwhms_fit, index=fdg_dataset_names),
+        "FDG_FWHM_org": pd.Series(fdg_fwhms_org, index=fdg_dataset_names),
+        "noise mean FDG": pd.Series(noise_fdg_mean, index=fdg_dataset_names),
+        "noise std FDG": pd.Series(noise_fdg_std, index=fdg_dataset_names),
+        "GA_FWHM_fit": pd.Series(ga_fwhms_fit, index=fdg_dataset_names),
+        "GA_FWHM_org": pd.Series(ga_fwhms_org, index=fdg_dataset_names),
+        "noise mean GA": pd.Series(noise_ga_mean, index=fdg_dataset_names),
+        "noise std GA": pd.Series(noise_ga_std, index=fdg_dataset_names),
     }
 
-
     df = pd.DataFrame(d)
-    file_name = root + '/MTF_val_CT.csv'
+    df.index.name = 'Iterations'
+    file_name = root + '/FWHM_all.csv'
     df.to_csv(file_name)
-    index_CT = ['ub_039','b_039','ub_068','ub_077','b_098','b_117']
-    d = {
-        "FWHM_org": pd.Series(CT_FWHMs_org, index=names),
-        'FWHM_fit': pd.Series(CT_FWHMs_fit, index=names),
-        "noise_mean_all_image": pd.Series(noise_CT_mean, index=names),
-        "noise_std_all_image": pd.Series(noise_CT_std, index=names),
-        "noise_mean_center": pd.Series(noise_CT_mean_center, index=names),
-        "noise_std_center": pd.Series(noise_CT_std_center, index=names),
-        "noise_mean_not_center": pd.Series(noise_CT_mean_not_center, index=names),
-        "noise_std_not_center": pd.Series(noise_CT_std_not_center, index=names)
-    }
+
+    print("Analysis completed successfully!")
 
 
-    df = pd.DataFrame(d)
-    file_name = root + '/FWHM_CT.csv'
-    df.to_csv(file_name)
-def sor(x):
-    return x[4:-2]
-
-
-namesFDG = [name for name in patient_names if 'FDG' in name and 'PET' not in name]
-namesFDG = sorted(namesFDG,key=lambda x: int(x[4:]))
-names_FDG_PET = [name for name in patient_names if 'FDG_PET' in name]
-names_FDG_PET = sorted(names_FDG_PET,key=lambda x: int(x[8:]))
-names_GA = [name for name in patient_names if 'GA' in name and 'PET' not in name]
-names_GA = sorted(names_GA,key=lambda x: int(x[3:]))
-names_GA_PET = [name for name in patient_names if 'GA_PET' in name]
-names_GA_PET = sorted(names_GA_PET,key=lambda x: int(x[7:]))
-names2 = namesFDG + names_GA
-#names2 = namesFDG + names_FDG_PET + names_GA + names_GA_PET
-#names2 = [e.value for e in Names if 'FDG' in e.value or 'GA' in e.value]
-Calculation.pre_init()
-operation = 'ESF'
-root = '../../Experimente'
-#save = '../../Experimente/images'
-#if not os.path.exists(save):
-    # Create a new directory because it does not exist
-    #os.makedirs(save)
-for name in names2:
-    x, LSF, x_pred, y_pred = Calculation.esf(root, name,operation)
-    #name = save + '/' + name
-    FWHM_fit = Calculation.fw_hm_fit(x_pred, y_pred)
-    mean,std = Calculation.noise_all_image(root,name)
-    #plt.plot(x_pred, y_pred)
-   # plt.plot(x, LSF, linestyle='--', marker='o', label=name)
-   # plt.grid()
-    #plt.legend()
-    #plt.show()
-
-    FWHM_org = Calculation.fw_hm_org(x, LSF)
-    print(name)
-    print(FWHM_fit)
-    print(FWHM_org)
-    if 'FDG' in name:
-        FDG_FWHMs_fit.append(FWHM_fit)
-        FDG_FWHMs_org.append(FWHM_org)
-        noise_FDG_mean.append(mean)
-        noise_FDG_std.append(std)
-    elif 'GA' in name:
-        GA_FWHMs_fit.append(FWHM_fit)
-        GA_FWHMs_org.append(FWHM_org)
-        noise_GA_mean.append(mean)
-        noise_GA_std.append(std)
-    print(FWHM_org)
-names = names + names2
-
-
-d = {
-    "FDG_FWHM_fit": pd.Series(FDG_FWHMs_fit, index=namesFDG),
-    "FDG_FWHM_org": pd.Series(FDG_FWHMs_org, index=namesFDG),
-    "noise mean FDG": pd.Series(noise_FDG_mean,index=namesFDG),
-    "noise std FDG": pd.Series(noise_FDG_std,index=namesFDG),
-    "GA_FWHM_fit": pd.Series(GA_FWHMs_fit, index=namesFDG),
-    "GA_FWHM_org": pd.Series(GA_FWHMs_org, index=namesFDG),
-    "noise mean GA": pd.Series(noise_GA_mean,index=namesFDG),
-    "noise std GA": pd.Series(noise_GA_std,index=namesFDG),
-}
-
-df = pd.DataFrame(d)
-df.index.name = 'Iterations'
-file_name = root + '/FWHM_all.csv'
-df.to_csv(file_name)
+if __name__ == '__main__':
+    main()
