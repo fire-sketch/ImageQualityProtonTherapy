@@ -16,7 +16,7 @@ The **Experiment_Evaluation** module offers two different analysis possibilities
 
 ## Modules
 
-### artificial_data_generation
+### Artificial_Data_Generation
 The core module for generating synthetic CT data. Implements various degradation procedures for simulating different image qualities:
 The Input is the original CT data and after adding noise or filtering, the images can be saved as DICOM or PNG.
 
@@ -37,7 +37,7 @@ The Input is the original CT data and after adding noise or filtering, the image
 - Combined processing (Filter + Noise)
 - Export as DICOM and PNG
 
-### artificial_data_evaluation
+### Artificial_Data_Evaluation
 Module for quantitative evaluation of artificially generated CT data through gamma analysis and dosimetric evaluation. Implements medical quality assurance metrics for validation of synthetic datasets.
 Here there are two dose arrays as input needed for the comparison of the two dose distribution. One distribution of the original CT data and one of the modified CT data. You get these through dose calculation in an dose calculation program such as RayStation.
 
@@ -47,7 +47,7 @@ Here there are two dose arrays as input needed for the comparison of the two dos
 - Multi-plane visualization (transversal, sagittal, coronal)
 - Statistical evaluation (pass rates, mean gamma, threshold analyses)
 
-### experiment_evaluation
+### Experiment_Evaluation
 Comprehensive module for quantitative image quality analysis of medical imaging data. Implements standardized metrics for evaluating image sharpness, noise, and frequency response characteristics.
 Here the experimental data of the PET/CT imaging and the CT resolution imaging is evaluated. The experiment data must be provided as input.
 
