@@ -114,7 +114,7 @@ input_data/
 
 ## Usage
 
-### Basic Configuration
+### Basic Configuration for the module Artifical_Data_Generation
 
 ```python
 # Verarbeitungsmodus wählen
@@ -161,18 +161,6 @@ for patient in gen:
 - Combines spatial filtering with noise addition
 - Realistic simulation of degraded image quality
 - Parameters: Filter width and noise sigma
-
-### Evaluation Modes
-
-#### MTF Analysis (`operation = 'CT'`)
-- Modulation Transfer Function for CT data
-- Radial LSF analysis with multiple angles
-- Frequency response characteristics of imaging system
-
-#### ESF Analysis (`operation = 'ESF'`)
-- Edge Spread Function for nuclear medicine data
-- Edge sharpness evaluation
-- LSF derivation and Gaussian fitting
 
 ### Data Evaluation
 - **Gamma Analysis**: Dosimetric comparisons with pass rate evaluation
