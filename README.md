@@ -183,22 +183,23 @@ project/
 │   ├── calculation_utils.py # Mathematical helper functions
 │   ├── Lookup_Data.py     # Experiment parameters
 │   ├── constants.py       # System constants
-│   └── outputImages/      # Example images of analyses
+│   ├── outputImages/      # Example images of analyses
+│   └── Experimente/           # Experiment data for evaluation
 ├── Artificial_Data_Evaluation/
 │   ├── main_evaluation.py # Gamma analysis main application
 │   ├── patient_evaluation.py # Dosimetric evaluation
 │   ├── evaluation_utils.py # Helper functions and constants
 │   └── Dicts.py           # Data structures (not shown)
-├── data/
-│   ├── input_data/         # Original DICOM files
-│   ├── output_data/        # Processed data
-│   ├── gauss/             # Gaussian-filtered data
-│   ├── rect/              # Rectangle-filtered data
-│   ├── noise/             # Noise variants
-│   ├── gauss_noise/       # Combined variants
-│   └── gamma_overlay/     # Gamma visualizations
-├── Experimente/           # Experiment data for evaluation
-└── requirements.txt
+└── data/
+    ├── input_data/         # Original DICOM files
+    ├── output_data/        # Processed data
+    ├── gauss/             # Gaussian-filtered data
+    ├── rect/              # Rectangle-filtered data
+    ├── noise/             # Noise added data
+    ├── gauss_noise/       # Combined data (noise and filtering)
+    └── gamma_overlay/     # Gamma visualizations
+
+ 
 ```
 
 
@@ -211,7 +212,7 @@ project/
 
 ### Noise Parameters
 - Standard deviation in Hounsfield Units (HU)
-- Typical values: 7.51, 20.55 HU
+- Typical values: 4 - 40 HU
 
 ### Export Formats
 - **DICOM**: Preserves medical metadata
