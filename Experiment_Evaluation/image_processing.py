@@ -56,7 +56,7 @@ def esf(root: str, name: str, operation: str) -> Tuple[np.ndarray, np.ndarray, n
         plt.xlabel('distance in mm')
         plt.grid()
         plt.ylabel('counts')
-        print(', '.join(map(str, esf_)))
+
         plt.savefig(IMSAVE_PATH + '/ESF.png')
         plt.close()
         # plt.show()
@@ -67,7 +67,7 @@ def esf(root: str, name: str, operation: str) -> Tuple[np.ndarray, np.ndarray, n
         plt.xlabel('distance in mm')
         plt.grid()
         plt.ylabel('counts')
-        print(', '.join(map(str, lsf)))
+
         plt.savefig(IMSAVE_PATH + '/LSF_step1.png')
         plt.close()
         # plt.show()
@@ -84,7 +84,7 @@ def esf(root: str, name: str, operation: str) -> Tuple[np.ndarray, np.ndarray, n
         plt.xlabel('distance in mm')
         plt.grid()
         plt.ylabel('counts')
-        print(', '.join(map(str, x)), '####', ', '.join(map(str, lsf)))
+
         plt.legend()
         plt.savefig(IMSAVE_PATH + '/LSFstep2.png')
         plt.close()
@@ -107,8 +107,6 @@ def esf(root: str, name: str, operation: str) -> Tuple[np.ndarray, np.ndarray, n
         plt.xlabel('distance in mm')
         plt.grid()
         plt.ylabel('counts (normalized)')
-        print('lsf', ', '.join(map(str, x)), '####', ', '.join(map(str, lsf)))
-        print('x_pred', ', '.join(map(str, x_pred)), '####', ', '.join(map(str, y_pred)))
         plt.savefig(IMSAVE_PATH + '/LSFstep3.png')
         plt.close()
         # plt.show()
