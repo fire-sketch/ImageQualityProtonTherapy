@@ -10,7 +10,7 @@ The **Experiment_Evaluation** module offers two different analysis possibilities
 
 1. **PET/CT Reconstruction Analysis**: Investigation of spatial resolution of artificial CTs generated from PET/CT data. The datasets are designated as FDG_1 to FDG_30 and GA_1 to GA_30, where FDG and GA stand for the administered radionuclides and the number indicates the number of reconstruction iterations of the algorithm. MTF10/MTF50 values as well as FWHM parameters are determined from the data to characterize spatial resolution.
 
-2. **Phantom-based Spatial Resolution Analysis**: Evaluation of data measured using the spatial resolution module of a phantom. Here, Line Spread Function (LSF) parameters are determined and visualized.
+2. **Phantom-based Spatial Resolution Analysis**: Evaluation of CT data measured using the spatial resolution module of a phantom. Here, Line Spread Function (LSF) parameters are determined and visualized.
 
 **Note:** Due to the size of medical CT datasets (typically several GB per patient) and data protection regulations, no example data is included in this repository. Specific experimental data can be provided upon request for research purposes.
 
