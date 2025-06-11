@@ -4,9 +4,10 @@ Noise Analysis Functions
 """
 
 import glob
+from typing import Tuple, List
+
 import numpy as np
 import pydicom
-from typing import Tuple, List
 
 import Lookup_Data
 import constants

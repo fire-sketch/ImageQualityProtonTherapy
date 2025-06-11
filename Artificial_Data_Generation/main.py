@@ -6,12 +6,13 @@ from Patient import PatientDataBase
 # combined: adds noise after filtering image data with gaussian kernel
 MODE = 'combined'
 
-#Paths
+# Paths
 DATA_PATH_IN = "../data/input_data"
 DATA_PATH_OUT = "../data/output_data"
 
 # Filter settings
 FILTER_TYPE = 'gaussian'  # 'gaussian' or 'rectangle'
+
 
 def main():
     """Main processing function with selectable modes."""
@@ -20,8 +21,8 @@ def main():
     data_base = PatientDataBase(DATA_PATH_IN)
     gen = data_base.patient_generator()
 
-    widths_gauss = [4,10]
-    widths_rectangle = [8,20]
+    widths_gauss = [4, 10]
+    widths_rectangle = [8, 20]
     noise_levels = [7.51, 20.55]
 
     # Select widths based on filter type
@@ -46,7 +47,7 @@ def main():
     # COMBINED SPATIAL + NOISE
     # ===========================
     elif MODE == 'combined':
-       # widths_subset = [2, 5, 9, 16]  # Reduced set for combined processing
+        # widths_subset = [2, 5, 9, 16]  # Reduced set for combined processing
 
         for pat in gen:
             print(pat.id)

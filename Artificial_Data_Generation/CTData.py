@@ -3,17 +3,19 @@ Core classes for handling 3D CT data and individual CT slices.
 Provides functionality for DICOM processing, spatial filtering and data export.
 """
 
-import numpy as np
-from scipy.ndimage import zoom
-import cv2
-from matplotlib import pyplot as plt
-from pathlib import Path
-import Filter
-import pydicom
-from pydicom.uid import generate_uid
 import shutil
+from pathlib import Path
+
+import cv2
+import numpy as np
+import pydicom
+from matplotlib import pyplot as plt
 from numpy.random import default_rng
 from pydicom.pixel_data_handlers.util import apply_modality_lut
+from pydicom.uid import generate_uid
+from scipy.ndimage import zoom
+
+import Filter
 
 
 class CT3D:
@@ -21,6 +23,7 @@ class CT3D:
     Represents a 3D CT volume composed of multiple CT layers.
     Provides functionality for 3D-filtering, noise addition and export operations.
     """
+
     def __init__(self, ct_layers):
         """
         Initialize CT3D with a list of CT layers.
@@ -63,6 +66,7 @@ class CT3D:
             for ct in self.ct_layers:
                 ct.write_modified_as_png(out_org, data_path, numbered, save_original, data_path_original)
             print(f'Saved modified png files to {data_path}')
+
     def write_modified_as_dicom(self, data_path) -> None:
         """
         Export modified CT data as dicom
@@ -159,6 +163,7 @@ class CTLayer:
 
     Handles conversions between raw pixel values and HU values and noise addition.
     """
+
     def __init__(self, dicom, filename) -> None:
         """
         Initialize CT Layer from DICOM dataset
@@ -222,8 +227,8 @@ class CTLayer:
         img_hu = ct
         img_min = center - width // 2
         img_max = center + width // 2
-       # plt.hist(img_hu.flatten(),bins=50)
-        #plt.show()
+        # plt.hist(img_hu.flatten(),bins=50)
+        # plt.show()
         img_hu[img_hu < img_min] = img_min
         img_hu[img_hu > img_max] = img_max
         img_hu = (img_hu - img_min) / (img_max - img_min) * 255.0
@@ -256,7 +261,8 @@ class CTLayer:
             plt.imsave(filename + '.png', self.get_window_ct(self.__modified_pixel_array, center, width),
                        cmap='gray')
             if save_original:
-                plt.imsave(data_path_original + '.png', self.get_window_ct(self.pixel_array, center, width), cmap='gray')
+                plt.imsave(data_path_original + '.png', self.get_window_ct(self.pixel_array, center, width),
+                           cmap='gray')
 
     def write_modified_as_dicom(self, data_path) -> None:
         """

@@ -7,8 +7,8 @@ import re
 from pathlib import Path
 from typing import List, Tuple
 
-import patient_evaluation as PatientEvaluation
 import evaluation_utils as utils
+import patient_evaluation as PatientEvaluation
 
 
 def get_patient_selection() -> Tuple[List[Path], List[str]]:

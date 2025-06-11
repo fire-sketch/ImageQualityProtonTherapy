@@ -5,16 +5,15 @@ Main application for medical image quality assessment.
 """
 
 import os
-
 from enum import Enum
 from pathlib import Path
 
 import pandas as pd
 
 import calculation_utils
+import constants
 import image_processing
 import noise_analysis
-import constants
 
 folder = constants.BASE_FOLDER
 

@@ -1,9 +1,10 @@
-from glob import glob
 import os
+from glob import glob
 from pathlib import Path
 from typing import Any, Generator
 
 import pydicom
+
 from Artificial_Data_Generation.CTData import CT3D, CTLayer
 
 
@@ -17,6 +18,7 @@ class Patient:
         width (float): Currently applied filter width
         noise_sigma (float) Currently applied noise level
     """
+
     def __init__(self, patient_id: str, path: str) -> None:
         """
         Initialize patient with CT scan data.
@@ -57,7 +59,7 @@ class Patient:
         return False
 
     def write_modified_as_png(self, data_path="../data/output_data/png", mods='gaussian',
-                              numbered =True, safe_original =True, data_path_original="../data/output_data/png_original",
+                              numbered=True, safe_original=True, data_path_original="../data/output_data/png_original",
                               center=None, width=None) -> None:
         """
         Save CT slices as PNG images with windowing options
@@ -125,6 +127,7 @@ class PatientDataBase:
 
     Provides efficient access to patient data and batch processing capabilities.
     """
+
     def __init__(self, path) -> None:
         """
         Initialize patient database.

@@ -2,15 +2,14 @@
 Image Processing and Analysis Functions
 
 """
-import os
-from pathlib import Path
 
-import numpy as np
+from typing import Tuple, Optional
+
 import matplotlib.pyplot as plt
+import numpy as np
+from numpy.fft import fft, fftfreq
 from scipy import ndimage
 from scipy.optimize import curve_fit
-from numpy.fft import fft, fftfreq
-from typing import Tuple, Optional, List
 
 import calculation_utils
 import constants
@@ -48,7 +47,7 @@ def esf(root: str, name: str, operation: str) -> Tuple[np.ndarray, np.ndarray, n
         plt.gca().set_axis_off()
         plt.savefig(f'{IMSAVE_PATH}/LSF_CT_filter_{name}.png')
         plt.close()
-       # plt.show()
+    # plt.show()
     z_summed = z_summed / s.shape[0]
     esf_ = -np.sum(z_summed, axis=1) / z_summed.shape[1]
     if name in debug_datasets:
@@ -58,9 +57,9 @@ def esf(root: str, name: str, operation: str) -> Tuple[np.ndarray, np.ndarray, n
         plt.grid()
         plt.ylabel('counts')
         print(', '.join(map(str, esf_)))
-        plt.savefig(IMSAVE_PATH+'/ESF.png')
+        plt.savefig(IMSAVE_PATH + '/ESF.png')
         plt.close()
-        #plt.show()
+        # plt.show()
     lsf = np.diff(esf_)
     if name in debug_datasets:
         plt.plot(lsf, marker='o')
@@ -71,7 +70,7 @@ def esf(root: str, name: str, operation: str) -> Tuple[np.ndarray, np.ndarray, n
         print(', '.join(map(str, lsf)))
         plt.savefig(IMSAVE_PATH + '/LSF_step1.png')
         plt.close()
-        #plt.show()
+        # plt.show()
     noise_indices = constants.NOISE_INDICES_ESF
     x = np.arange(len(lsf), dtype='float')
     x = x * data[0].PixelSpacing[0]
@@ -89,7 +88,7 @@ def esf(root: str, name: str, operation: str) -> Tuple[np.ndarray, np.ndarray, n
         plt.legend()
         plt.savefig(IMSAVE_PATH + '/LSFstep2.png')
         plt.close()
-        #plt.show()
+        # plt.show()
     function = calculation_utils.gauss
     x_pred = np.arange(x[0], x[-1], constants.PIXEL_SPACING_PRECISION * data[0].PixelSpacing[0])
     p_opt, p_cov = curve_fit(function, x, lsf, p0=p0)
@@ -112,7 +111,7 @@ def esf(root: str, name: str, operation: str) -> Tuple[np.ndarray, np.ndarray, n
         print('x_pred', ', '.join(map(str, x_pred)), '####', ', '.join(map(str, y_pred)))
         plt.savefig(IMSAVE_PATH + '/LSFstep3.png')
         plt.close()
-        #plt.show()
+        # plt.show()
     return x, lsf, x_pred, y_pred
 
 
@@ -193,7 +192,7 @@ def do_lsf_radial(root: str, name: str, operation: str) -> Tuple[np.ndarray, np.
     rebin_x = re_x
     plt.savefig(IMSAVE_PATH + f'/LSF_CT_filter_{name}.png')
     plt.close()
-    #plt.show()
+    # plt.show()
     to_delete = []
     for i in range(len(rebin_y)):
         if np.abs(rebin_y[i]) < constants.REBIN_THRESHOLD:
@@ -282,7 +281,8 @@ def do_mtf_fit(x: np.ndarray, y: np.ndarray, spacing: float) -> Tuple[np.ndarray
     line[constants.MTF_FIT_ZERO_PAD_CENTER - int(len(x) / 2):constants.MTF_FIT_ZERO_PAD_CENTER + int(len(x) / 2)] = y
     xf1, y1 = do_mtf(line, spacing)
 
-    return xf1[0:constants.MTF_FIT_FREQUENCY_LIMIT] * constants.MTF_MULTIPLICATION_FACTOR, y1[0:constants.MTF_FIT_FREQUENCY_LIMIT]
+    return xf1[0:constants.MTF_FIT_FREQUENCY_LIMIT] * constants.MTF_MULTIPLICATION_FACTOR, y1[
+                                                                                           0:constants.MTF_FIT_FREQUENCY_LIMIT]
 
 
 def fw_hm_org(x: np.ndarray, y: np.ndarray, argmax: Optional[int] = None) -> float:
@@ -367,8 +367,10 @@ def mtf_val_org(x: np.ndarray, y: np.ndarray) -> Tuple[float, float]:
             break
     x1 = x[index_50]
     x2 = x[index_50 + 1]
-    x_50 = np.round(calculation_utils.zero_intersection(x1, y_50[index_50], x2, y_50[index_50 + 1]), constants.MTF_PRECISION)
+    x_50 = np.round(calculation_utils.zero_intersection(x1, y_50[index_50], x2, y_50[index_50 + 1]),
+                    constants.MTF_PRECISION)
     x1 = x[index_10]
     x2 = x[index_10 + 1]
-    x_10 = np.round(calculation_utils.zero_intersection(x1, y_10[index_10], x2, y_10[index_10 + 1]), constants.MTF_PRECISION)
+    x_10 = np.round(calculation_utils.zero_intersection(x1, y_10[index_10], x2, y_10[index_10 + 1]),
+                    constants.MTF_PRECISION)
     return x_50, x_10
